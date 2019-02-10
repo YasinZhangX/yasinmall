@@ -10,6 +10,7 @@
         </filter>
     </appender>
 
+    <!--TODO: 修改路径-->
     <appender name="yasinmall" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>D:\mallProject\yasinmall_log\yasinmall.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -22,7 +23,7 @@
         </encoder>
     </appender>
 
-
+    <!--TODO: 修改路径-->
     <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>D:\mallProject\yasinmall_log\error.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
