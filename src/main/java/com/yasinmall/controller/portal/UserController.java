@@ -175,6 +175,7 @@ public class UserController {
         ServerResponse<User> response = iUserService.updateInformation(user);
         if (response.isSuccess()) {
             response.getData().setUsername(currentUser.getUsername());
+            response.getData().setRole(currentUser.getRole());
             session.setAttribute(Const.CURRENT_USER, response.getData());
         }
 
