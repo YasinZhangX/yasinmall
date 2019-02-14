@@ -3,7 +3,6 @@ package com.yasinmall.service;
 import com.github.pagehelper.PageInfo;
 import com.yasinmall.common.ServerResponse;
 import com.yasinmall.pojo.Product;
-import com.yasinmall.vo.ProductDetailVo;
 
 /**
  * @author yasin
@@ -14,8 +13,15 @@ public interface IProductService {
 
     ServerResponse<String> manageSetSaleStatus(Integer productId, Integer status);
 
-    ServerResponse<ProductDetailVo> manageGetProductDetail(Integer productId);
+    ServerResponse manageGetProductDetail(Integer productId);
 
     ServerResponse<PageInfo> manageGetProductList(int pageNum, int pageSize);
+
+    ServerResponse<PageInfo> manageSearchProduce(String productName, Integer productId, int pageNum, int pageSize);
+
+    ServerResponse getProductDetail(Integer productId);
+
+    ServerResponse<PageInfo> getProductByKeywordCategory(String keyword, Integer categoryId,
+                                                         int pageNum, int pageSize, String orderBy);
 
 }

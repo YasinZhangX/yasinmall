@@ -92,7 +92,7 @@ public class CategoryServiceImpl implements ICategoryService {
      * @return 携带节点ID List的ServerResponse
      */
     @Override
-    public ServerResponse selectCategoryAndChildrenById(Integer categoryId) {
+    public ServerResponse<List<Integer>> selectCategoryAndChildrenById(Integer categoryId) {
         Set<Category> categorySet = Sets.newHashSet();
         List<Integer> categoryIdList = Lists.newArrayList();
 
