@@ -128,6 +128,10 @@ public class ProductServiceImpl implements IProductService {
      */
     @Override
     public ServerResponse<PageInfo> manageSearchProduce(String productName, Integer productId, int pageNum, int pageSize) {
+        if (StringUtils.isBlank(productName) && productId == null) {
+            return ServerResponse.createByErrorCodeM(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
+        }
+
         PageHelper.startPage(pageNum, pageSize);
         if (StringUtils.isNotBlank(productName)) {
             productName = "%" + productName + "%";
@@ -178,9 +182,6 @@ public class ProductServiceImpl implements IProductService {
                     List<ProductListVo> productListVoList = Lists.newArrayList();
                     PageInfo pageInfo = new PageInfo(productListVoList);
                     return ServerResponse.createBySuccessD(pageInfo);
-                } else {
-                    // 没有该分类，但有关键字，则认为从分类根节点查找
-                    categoryIdList = iCategoryService.selectCategoryAndChildrenById(0).getData();
                 }
             } else {
                 categoryIdList = iCategoryService.selectCategoryAndChildrenById(category.getId()).getData();
