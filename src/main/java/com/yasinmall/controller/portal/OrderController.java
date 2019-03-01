@@ -32,6 +32,68 @@ public class OrderController {
     @Autowired
     private IOrderService iOrderService;
 
+    /**
+     * 创建订单
+     * @param session 用户session
+     * @param shippingId 收货地址ID
+     * @return ServerResponse
+     */
+    @RequestMapping("create.do")
+    @ResponseBody
+    public ServerResponse create(HttpSession session, Integer shippingId) {
+        // 获取当前用户
+        User user = getCurrentUser(session);
+        if (user == null) {
+            return needLoginRsp();
+        }
+
+        return iOrderService.createOrder(user.getId(), shippingId);
+    }
+
+    /**
+     * 删除订单
+     * @param session 用户session
+     * @param orderNo 待删除订单号
+     * @return ServerResponse
+     */
+    @RequestMapping("cancel.do")
+    @ResponseBody
+    public ServerResponse cancel(HttpSession session, Long orderNo) {
+        // 获取当前用户
+        User user = getCurrentUser(session);
+        if (user == null) {
+            return needLoginRsp();
+        }
+
+        return iOrderService.cancel(user.getId(), orderNo);
+    }
+
+    /**
+     * 删除订单
+     * @param session 用户session
+     * @param orderNo 待删除订单号
+     * @return ServerResponse
+     */
+    @RequestMapping("get_order_cart_product.do")
+    @ResponseBody
+    public ServerResponse getOrderCartProduct(HttpSession session, Long orderNo) {
+        // 获取当前用户
+        User user = getCurrentUser(session);
+        if (user == null) {
+            return needLoginRsp();
+        }
+
+        return iOrderService.cancel(user.getId(), orderNo);
+    }
+
+
+    /**
+     * 订单支付
+     * @param session 用户session
+     * @param orderNo 订单号
+     * @param request 用户请求
+     * @return ServerResponse
+     */
     @RequestMapping("pay.do")
     @ResponseBody
     public ServerResponse pay(HttpSession session, Long orderNo, HttpServletRequest request) {
@@ -45,6 +107,11 @@ public class OrderController {
         return iOrderService.pay(orderNo, user.getId(), path);
     }
 
+    /**
+     * Alipay回调处理函数
+     * @param request Alipay HTTP数据
+     * @return alipay回调字符串
+     */
     @RequestMapping("alipay_callback.do")
     @ResponseBody
     public Object alipayCallback(HttpServletRequest request) {
@@ -81,6 +148,12 @@ public class OrderController {
         return Const.AlipayCallback.RESPONSE_FAILED;
     }
 
+    /**
+     * 查询订单支付状态
+     * @param session 用户session
+     * @param orderNo 订单号
+     * @return ServerResponse
+     */
     @RequestMapping("query_order_pay_status.do")
     @ResponseBody
     public ServerResponse queryOrderPayStatus(HttpSession session, Long orderNo) {
