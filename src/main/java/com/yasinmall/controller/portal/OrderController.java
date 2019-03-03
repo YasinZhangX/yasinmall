@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,23 +70,60 @@ public class OrderController {
     }
 
     /**
-     * 删除订单
+     * 获取用户购物车中产品列表
      * @param session 用户session
-     * @param orderNo 待删除订单号
      * @return ServerResponse
      */
     @RequestMapping("get_order_cart_product.do")
     @ResponseBody
-    public ServerResponse getOrderCartProduct(HttpSession session, Long orderNo) {
+    public ServerResponse getOrderCartProduct(HttpSession session) {
         // 获取当前用户
         User user = getCurrentUser(session);
         if (user == null) {
             return needLoginRsp();
         }
 
-        return iOrderService.cancel(user.getId(), orderNo);
+        return iOrderService.getOrderCartProduct(user.getId());
     }
 
+    /**
+     * 获取用户订单详情
+     *
+     * @param session 用户session
+     * @param orderNo 用户订单ID
+     * @return ServerResponse
+     */
+    @RequestMapping("detail.do")
+    @ResponseBody
+    public ServerResponse detail(HttpSession session, Long orderNo) {
+        // 获取当前用户
+        User user = getCurrentUser(session);
+        if (user == null) {
+            return needLoginRsp();
+        }
+
+        return iOrderService.getOrderDetail(user.getId(), orderNo);
+    }
+
+    /**
+     * 查看订单
+     *
+     * @param session 用户session
+     * @return ServerResponse
+     */
+    @RequestMapping("list.do")
+    @ResponseBody
+    public ServerResponse list(HttpSession session,
+                               @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                               @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        // 获取当前用户
+        User user = getCurrentUser(session);
+        if (user == null) {
+            return needLoginRsp();
+        }
+
+        return iOrderService.getOrderList(user.getId(), pageNum, pageSize);
+    }
 
     /**
      * 订单支付
