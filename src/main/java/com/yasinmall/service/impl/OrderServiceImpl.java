@@ -274,7 +274,7 @@ public class OrderServiceImpl implements IOrderService {
                 // 主要path后需要添加"/"
                 String qrPath = String.format(path+"/qr-%s.png", response.getOutTradeNo());
                 String qrFileName = String.format("qr-%s.png", response.getOutTradeNo());
-                ZxingUtils.getQRCodeImge(response.getOutTradeNo(), 256, qrPath);
+                ZxingUtils.getQRCodeImge(response.getQrCode(), 256, qrPath);
 
                 // 上传二维码图像
                 File targetFile = new File(path, qrFileName);
@@ -388,7 +388,7 @@ public class OrderServiceImpl implements IOrderService {
         for (Cart cartItem : cartList) {
             OrderItem orderItem = new OrderItem();
             Product product = productMapper.selectByPrimaryKey(cartItem.getProductId());
-            if (product.getStatus() == Const.ProductStatusEnum.ON_SALE.getCode()) {
+            if (product.getStatus() != Const.ProductStatusEnum.ON_SALE.getCode()) {
                 return ServerResponse.createByErrorM("产品" + product.getName() + "不处于在线售卖状态");
             }
 
