@@ -81,6 +81,7 @@ public class ShippingServiceImpl implements IShippingService {
     /**
      * 列出地址
      */
+    @SuppressWarnings("unchecked")
     public ServerResponse list(Integer userId, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<Shipping> shippingList = shippingMapper.selectByUserId(userId);

@@ -13,6 +13,10 @@
 # maven ignore
 target/
 
+# gradle ignore
+.gradle/
+build/
+
 #eclipse ignore
 .settings/
 .project

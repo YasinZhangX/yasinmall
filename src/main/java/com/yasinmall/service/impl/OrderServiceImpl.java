@@ -28,7 +28,6 @@ import com.yasinmall.vo.OrderProductVo;
 import com.yasinmall.vo.OrderVo;
 import com.yasinmall.vo.ShippingVo;
 import org.apache.commons.lang.StringUtils;
-import org.aspectj.weaver.ast.Or;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
