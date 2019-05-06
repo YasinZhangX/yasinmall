@@ -5,6 +5,9 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
@@ -39,18 +42,10 @@ dependencies {
     testCompile("junit:junit")
     compile group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '2.0.1'
     compile group: 'com.github.pagehelper', name: 'pagehelper-spring-boot-starter', version: '1.2.10'
-//    compile 'org.apache.tomcat:tomcat-servlet-api:7.0.93'
-//    compile 'org.springframework:spring-webmvc:4.0.2.RELEASE'
-//    compile 'org.springframework:spring-oxm:4.0.2.RELEASE'
-//    compile 'org.springframework:spring-jdbc:4.0.2.RELEASE'
-//    compile 'org.springframework:spring-tx:4.0.2.RELEASE'
-//    compile 'org.springframework:spring-test:4.0.2.RELEASE'
     compile 'org.aspectj:aspectjweaver:1.7.3'
     compile 'org.aspectj:aspectjrt:1.6.11'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.12'
     compile 'commons-dbcp:commons-dbcp:1.4'
-    compile 'ch.qos.logback:logback-classic:1.1.2'
-    compile 'ch.qos.logback:logback-core:1.1.2'
     compile 'mysql:mysql-connector-java:5.1.6'
     compile 'com.google.guava:guava:20.0'
     compile 'org.apache.commons:commons-lang3:3.5'
@@ -65,7 +60,6 @@ dependencies {
     compile 'commons-codec:commons-codec:1.10'
     compile 'commons-configuration:commons-configuration:1.10'
     compile 'commons-lang:commons-lang:2.6'
-    compile 'commons-logging:commons-logging:1.1.1'
     compile 'com.google.zxing:core:2.1'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'org.hamcrest:hamcrest-core:1.3'

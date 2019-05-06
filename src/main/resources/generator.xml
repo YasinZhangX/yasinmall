@@ -5,10 +5,10 @@
 
 <generatorConfiguration>
     <!--导入属性配置-->
-    <properties resource="datasource.properties"></properties>
+    <properties resource="application.properties"></properties>
 
     <!--指定特定数据库的jdbc驱动jar包的位置-->
-    <classPathEntry location="${db.driverLocation}"/>
+    <classPathEntry location="${database.driver-location}"/>
 
     <context id="default" targetRuntime="MyBatis3">
 
@@ -20,10 +20,10 @@
 
         <!--jdbc的数据库连接 -->
         <jdbcConnection
-                driverClass="${db.driverClassName}"
-                connectionURL="${db.url}"
-                userId="${db.username}"
-                password="${db.password}">
+                driverClass="${spring.datasource.driver-class-name}"
+                connectionURL="${spring.datasource.url}"
+                userId="${spring.datasource.username}"
+                password="${spring.datasource.password}">
         </jdbcConnection>
 
 
