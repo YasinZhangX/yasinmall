@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
   <contextName>logback</contextName>
-  <!--导入属性配置-->
+
+  <!--自定义颜色配置-->
+  <conversionRule conversionWord="customColor" converterClass="com.yasinmall.configuration.LogbackColorful"/>
+
   <!-- 日志根目录-->
-  <springProperty scope="context" name="LOG_HOME" source="logging.path" defaultValue="D:\\mallProject\\yasinmall_log"/>
+  <springProperty scope="context" name="LOG_HOME" source="logging.path" defaultValue="D:\mallProject\yasinmall_log"/>
 
   <!-- 日志级别 -->
   <springProperty scope="context" name="LOG_ROOT_LEVEL" source="logging.level.root" defaultValue="DEBUG"/>
@@ -12,54 +15,65 @@
   <springProperty scope="context" name="STDOUT" source="log.stdout" defaultValue="STDOUT"/>
 
   <!-- 日志文件名称-->
-  <property name="LOG_PREFIX" value="spring-boot-logback" />
+  <springProperty scope="context" name="LOG_PREFIX" source="logging.file" defaultValue="yasinmall"/>
 
   <!-- 日志文件编码-->
   <property name="LOG_CHARSET" value="UTF-8" />
 
   <!-- 日志文件路径+日期-->
-  <property name="LOG_DIR" value="${LOG_HOME}/%d{yyyyMMdd}" />
+  <property name="LOG_DIR" value="${LOG_HOME}/%d{yyyy-MM-dd}" />
 
   <!--对日志进行格式化-->
-  <property name="LOG_MSG" value="[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n"/>
+  <property name="LOG_MSG" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %customColor(%-5level) --- %cyan(%c{40}) : %msg%n"/>
 
   <!--文件大小，默认10MB-->
-  <property name="MAX_FILE_SIZE" value="10MB" />
+  <springProperty scope="context" name="MAX_FILE_SIZE" source="logging.file.max-size" defaultValue="10MB"/>
 
   <!-- 配置日志的滚动时间 ，表示只保留最近 10 天的日志-->
-  <property name="MAX_HISTORY" value="10"/>
+  <springProperty scope="context" name="MAX_HISTORY" source="logging.file.max-history" defaultValue="10"/>
 
   <!--输出到控制台-->
   <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n</pattern>
-    </encoder>
-    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>DEBUG</level>
-    </filter>
+    <!-- 输出的日志内容格式化-->
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>${LOG_MSG}</pattern>
+    </layout>
   </appender>
 
   <!--输出到文件-->
   <appender name="yasinmall" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>yasinmall.log</file>
+    <file>${LOG_HOME}\${LOG_PREFIX}.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>yasinmall.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
-      <maxHistory>10</maxHistory>
+      <!--日志文件路径-->
+      <fileNamePattern>${LOG_HOME}\${LOG_PREFIX}_%d{yyyy-MM-dd}_%i.gz</fileNamePattern>
+      <!-- 配置日志的滚动时间 ，表示只保留最近 10 天的日志-->
+      <maxHistory>${MAX_HISTORY}</maxHistory>
+      <!--当天的日志大小超过 ${MAX_FILE_SIZE} 文件大小时候，新的内容写入新的文件， 默认10MB-->
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
     </rollingPolicy>
+    <!-- 输出的日志内容格式化-->
     <encoder>
-      <pattern>[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n</pattern>
+      <pattern>${LOG_MSG}</pattern>
     </encoder>
   </appender>
 
+  <!-- 定义 ERROR 日志的输出方式 -->
   <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <File>error.log</File>
+    <File>${LOG_HOME}\${LOG_PREFIX}_error.log</File>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
-      <!--<append>true</append>-->
-      <maxHistory>10</maxHistory>
+      <fileNamePattern>${LOG_HOME}\${LOG_PREFIX}_error_%d{yyyy-MM-dd}_%i.gz</fileNamePattern>
+      <!-- 配置日志的滚动时间 ，表示只保留最近 10 天的日志-->
+      <maxHistory>${MAX_HISTORY}</maxHistory>
+      <!--当天的日志大小超过 ${MAX_FILE_SIZE} 文件大小时候，新的内容写入新的文件， 默认10MB-->
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
     </rollingPolicy>
+    <!-- 输出的日志内容格式化-->
     <encoder>
-      <pattern>[%d{HH:mm:ss.SSS}][%p][%c{40}][%t] %m%n</pattern>
+      <pattern>${LOG_MSG}</pattern>
     </encoder>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
       <level>ERROR</level>
@@ -68,28 +82,30 @@
     </filter>
   </appender>
 
-  <logger name="com.yasinmall" additivity="false" level="INFO" >
-    <appender-ref ref="yasinmall" />
-    <appender-ref ref="console"/>
-  </logger>
-
   <!-- 测试环境+开发环境. 多个使用逗号隔开. -->
-  <springProfile name="test,dev">
+  <springProfile name="test,dev,default">
+    <!-- additivity 设为false,则logger内容不附加至root ，配置以配置包下的所有类的日志的打印，级别是 INFO -->
     <logger name="com.yasinmall" additivity="false" level="INFO" >
       <appender-ref ref="yasinmall" />
       <appender-ref ref="console"/>
     </logger>
+    <logger name="org.springframework" level="INFO" />
+    <!-- mybatis log 日志 -->
+    <logger name="com.yasinmall.dao" level="DEBUG"/>
   </springProfile>
   <!-- 生产环境. -->
   <springProfile name="prod">
+    <!-- additivity 设为false,则logger内容不附加至root ，配置以配置包下的所有类的日志的打印，级别是 INFO -->
     <logger name="com.yasinmall" additivity="false" level="ERROR" >
       <appender-ref ref="yasinmall" />
       <appender-ref ref="console"/>
     </logger>
+    <logger name="org.springframework" level="ERROR" />
+    <!-- mybatis log 日志 -->
+    <logger name="com.yasinmall.dao" level="ERROR"/>
   </springProfile>
 
-  <!-- mybatis log 日志 -->
-  <logger name="com.yasinmall.dao" level="DEBUG"/>
+
 
   <root level="DEBUG">
     <appender-ref ref="console"/>

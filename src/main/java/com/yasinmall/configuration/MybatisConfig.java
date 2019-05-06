@@ -33,7 +33,7 @@ public class MybatisConfig {
         try {
             //添加XML目录
             ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            sqlSession.setMapperLocations(resolver.getResources("classpath:mapping/*.xml"));
+            sqlSession.setMapperLocations(resolver.getResources("classpath:mappers/*.xml"));
             return sqlSession.getObject();
         } catch (Exception e) {
             e.printStackTrace();
