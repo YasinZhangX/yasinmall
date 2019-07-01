@@ -3,8 +3,7 @@ package com.yasinmall.service.impl;
 import com.google.common.collect.Lists;
 import com.yasinmall.service.IFileService;
 import com.yasinmall.util.FTPUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,9 +15,8 @@ import java.util.UUID;
  * @author yasin
  */
 @Service("iFileService")
+@Slf4j
 public class FileServiceImpl implements IFileService {
-
-    private Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
     /**
      * 上传文件到FTP服务器
@@ -29,7 +27,7 @@ public class FileServiceImpl implements IFileService {
         // 扩展名
         String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
         String uploadFileName = UUID.randomUUID().toString() + "." + fileExtensionName;
-        logger.info("开始上传文件,上传文件名:{%s},上传路径:{%s},新文件名:{%s}", fileName, path, uploadFileName);
+        log.info("开始上传文件,上传文件名:{%s},上传路径:{%s},新文件名:{%s}", fileName, path, uploadFileName);
 
         // 确定目录是否存在，若不存在，则创建目录
         File fileDir = new File(path);
@@ -49,7 +47,7 @@ public class FileServiceImpl implements IFileService {
             // 上传完成后删除upload下的文件
             targetFile.delete();
         } catch (IOException e) {
-            logger.error("上传文件异常", e);
+            log.error("上传文件异常", e);
         }
 
         return targetFile.getName();

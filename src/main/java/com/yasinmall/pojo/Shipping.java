@@ -1,7 +1,14 @@
 package com.yasinmall.pojo;
 
+import lombok.*;
+
 import java.util.Date;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Shipping {
     private Integer id;
 
