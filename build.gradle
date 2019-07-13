@@ -42,6 +42,7 @@ dependencies {
     testCompile("junit:junit")
     compile group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '2.0.1'
     compile group: 'com.github.pagehelper', name: 'pagehelper-spring-boot-starter', version: '1.2.10'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.8'
     compile 'org.aspectj:aspectjweaver:1.7.3'
     compile 'org.aspectj:aspectjrt:1.6.11'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.12'
@@ -66,9 +67,7 @@ dependencies {
     compile 'redis.clients:jedis:2.9.0'
     compile group: 'org.jetbrains', name: 'annotations', version: '17.0.0'
     compile files('lib/alipay-sdk-java-3.3.0.jar')
-    compile files('lib/alipay-sdk-java-3.3.0-source.jar')
     compile files('lib/alipay-trade-sdk-20161215.jar')
-    compile files('lib/alipay-trade-sdk-20161215-source.jar')
 }
 
 group = 'com'
@@ -77,13 +76,15 @@ description = 'yasinmall Webapp'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
+def env = System.getProperty("profile") ?: "home"
+
 sourceSets {
     main {
         java {
             srcDirs = ['src/main/java']
         }
-        resources{
-            srcDirs = ['src/main/resources']
+        resources {
+            srcDirs = ["src/main/resources", "src/main/resources/$env"]
         }
     }
     test{
@@ -97,6 +98,9 @@ sourceSets {
 // set character
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+tasks.withType(Javadoc) {
+    options.encoding = "UTF-8"
 }
 
 // mybatis generator task

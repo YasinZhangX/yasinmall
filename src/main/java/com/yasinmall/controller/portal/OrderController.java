@@ -109,6 +109,8 @@ public class OrderController {
      * 查看订单
      *
      * @param session 用户session
+     * @param pageNum 页码数
+     * @param pageSize 页面大小
      * @return ServerResponse
      */
     @RequestMapping("list.do")

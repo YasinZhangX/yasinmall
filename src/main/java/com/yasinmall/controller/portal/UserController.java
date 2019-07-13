@@ -30,7 +30,7 @@ public class UserController {
      * @param username 用户名
      * @param password 用户登录密码
      * @param session  用户session
-     * @return com.yasinmall.common.ServerResponse<com.yasinmall.pojo.User>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
     @ResponseBody
@@ -46,7 +46,7 @@ public class UserController {
      * 用户登出，直接删除对应的 session
      *
      * @param session 用户session
-     * @return com.yasinmall.common.ServerResponse<java.lang.String>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "logout.do", method = RequestMethod.POST)
     @ResponseBody
@@ -59,7 +59,7 @@ public class UserController {
      * 用户注册
      *
      * @param user 用户数据
-     * @return com.yasinmall.common.ServerResponse<java.lang.String>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "register.do", method = RequestMethod.POST)
     @ResponseBody
@@ -72,7 +72,7 @@ public class UserController {
      *
      * @param str  待验证消息
      * @param type 验证类型
-     * @return com.yasinmall.common.ServerResponse<java.lang.String>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "check_valid.do", method = RequestMethod.POST)
     @ResponseBody
@@ -84,7 +84,7 @@ public class UserController {
      * 获取用户信息
      *
      * @param session 用户session
-     * @return com.yasinmall.common.ServerResponse<com.yasinmall.pojo.User>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
     @ResponseBody
@@ -101,7 +101,7 @@ public class UserController {
      * 获取用户“找回密码”问题
      *
      * @param username 用户名
-     * @return com.yasinmall.common.ServerResponse<java.lang.String>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "forget_get_question.do", method = RequestMethod.POST)
     @ResponseBody
@@ -115,7 +115,7 @@ public class UserController {
      * @param username 用户名
      * @param question 用户找回密码问题
      * @param answer   用户找回密码答案
-     * @return com.yasinmall.common.ServerResponse<java.lang.String>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "forget_check_answer.do", method = RequestMethod.POST)
     @ResponseBody
@@ -129,7 +129,7 @@ public class UserController {
      * @param username    用户名
      * @param passwordNew 用户的新密码
      * @param forgetToken 用户的重置密码的token
-     * @return com.yasinmall.common.ServerResponse<java.lang.String>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "forget_reset_password.do", method = RequestMethod.POST)
     @ResponseBody
@@ -143,7 +143,7 @@ public class UserController {
      * @param session     用户session
      * @param passwordOld 用户的旧密码
      * @param passwordNew 用户的新密码
-     * @return com.yasinmall.common.ServerResponse<java.lang.String>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "reset_password.do", method = RequestMethod.POST)
     @ResponseBody
@@ -161,7 +161,7 @@ public class UserController {
      *
      * @param session 用户session
      * @param user    用户数据
-     * @return com.yasinmall.common.ServerResponse<com.yasinmall.pojo.User>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "update_information.do", method = RequestMethod.POST)
     @ResponseBody
@@ -186,7 +186,7 @@ public class UserController {
      * 获取用户信息
      *
      * @param session 用户session
-     * @return com.yasinmall.common.ServerResponse<com.yasinmall.pojo.User>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "get_information.do", method = RequestMethod.POST)
     @ResponseBody
