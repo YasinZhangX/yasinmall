@@ -70,7 +70,7 @@ public class UserServiceImpl implements IUserService {
      *
      * @param str  待验证消息
      * @param type 验证类型
-     * @return com.yasinmall.common.ServerResponse<java.lang.String>
+     * @return com.yasinmall.common.ServerResponse
      */
     @Override
     public ServerResponse<String> checkValid(String str, String type) {
@@ -98,7 +98,7 @@ public class UserServiceImpl implements IUserService {
      * 获取“找回密码”问题
      *
      * @param username 用户名
-     * @return com.yasinmall.common.ServerResponse<java.lang.String>
+     * @return com.yasinmall.common.ServerResponse
      */
     @Override
     public ServerResponse<String> selectQuestion(String username) {

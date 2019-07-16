@@ -28,7 +28,7 @@ public class UserManageController {
      * @param username 用户名
      * @param password 用户登录密码
      * @param session  用户session
-     * @return com.yasinmall.common.ServerResponse<com.yasinmall.pojo.User>
+     * @return com.yasinmall.common.ServerResponse
      */
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
     @ResponseBody
