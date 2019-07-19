@@ -27,6 +27,40 @@ public class PropertiesUtil {
         }
     }
 
+    public static Boolean getBoolProperty(String key) {
+        String value = getProperty(key);
+        if (value == null) {
+            return null;
+        }
+        return Boolean.parseBoolean(value);
+    }
+
+
+    public static Boolean getBoolProperty(String key, Boolean defaultValue) {
+        String value = getProperty(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return Boolean.parseBoolean(value);
+    }
+
+    public static Integer getIntProperty(String key) {
+        String value = getProperty(key);
+        if (value == null) {
+            return null;
+        }
+        return Integer.parseInt(value);
+    }
+
+
+    public static Integer getIntProperty(String key, Integer defaultValue) {
+        String value = getProperty(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return Integer.parseInt(value);
+    }
+
     public static String getProperty(String key) {
         String value = props.getProperty(key.trim());
         if (StringUtils.isBlank(value)) {
@@ -35,10 +69,10 @@ public class PropertiesUtil {
         return value.trim();
     }
 
-    public static String getProperty(String key, String defautlValue) {
+    public static String getProperty(String key, String defaultValue) {
         String value = props.getProperty(key.trim());
         if (StringUtils.isBlank(value)) {
-            value = defautlValue;
+            value = defaultValue;
         }
         return value.trim();
     }
