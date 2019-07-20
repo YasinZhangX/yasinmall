@@ -68,7 +68,10 @@ dependencies {
     compile files('lib/alipay-trade-sdk-20161215.jar')
     
     // 二期新增部分
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.8'
+    annotationProcessor 'org.projectlombok:lombok:1.18.2'
+    compileOnly 'org.projectlombok:lombok:1.18.2'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.2'
+    testCompileOnly 'org.projectlombok:lombok:1.18.2'
     compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
 }
 
@@ -78,7 +81,7 @@ description = 'yasinmall Webapp'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-def env = System.getProperty("profile") ?: "lab"
+def env = System.getProperty("profile") ?: "home"
 
 sourceSets {
     main {
