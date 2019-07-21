@@ -98,7 +98,6 @@ sourceSets {
     }
 }
 
-
 // set character
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'

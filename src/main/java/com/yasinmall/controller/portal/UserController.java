@@ -5,6 +5,8 @@ import com.yasinmall.common.ResponseCode;
 import com.yasinmall.common.ServerResponse;
 import com.yasinmall.pojo.User;
 import com.yasinmall.service.IUserService;
+import com.yasinmall.util.JsonUtil;
+import com.yasinmall.util.RedisPoolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +27,7 @@ public class UserController {
 
 
     /**
-     * 用户登录，并创建对应的 session
+     * 用户登录，并创建对应的 session  5B9DC250F68AC355518BD757787BF172 D5D80EDD063CD6A132BC147F4E334D8B
      *
      * @param username 用户名
      * @param password 用户登录密码
@@ -37,7 +39,8 @@ public class UserController {
     public ServerResponse<User> login(String username, String password, HttpSession session) {
         ServerResponse<User> response = iUserService.login(username, password);
         if (response.isSuccess()) {
-            session.setAttribute(Const.CURRENT_USER, response.getData());
+            RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(response.getData()),
+                Const.RedisCacheExpireTime.REDIS_SESSION_TIME);
         }
         return response;
     }
