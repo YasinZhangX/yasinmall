@@ -42,10 +42,10 @@
 
   <!--输出到文件-->
   <appender name="yasinmall" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOG_HOME}\${LOG_PREFIX}.log</file>
+    <file>${LOG_HOME}/${LOG_PREFIX}.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!--日志文件路径-->
-      <fileNamePattern>${LOG_HOME}\${LOG_PREFIX}_%d{yyyy-MM-dd}_%i.gz</fileNamePattern>
+      <fileNamePattern>${LOG_HOME}/${LOG_PREFIX}_%d{yyyy-MM-dd}_%i.gz</fileNamePattern>
       <!-- 配置日志的滚动时间 ，表示只保留最近 10 天的日志-->
       <maxHistory>${MAX_HISTORY}</maxHistory>
       <!--当天的日志大小超过 ${MAX_FILE_SIZE} 文件大小时候，新的内容写入新的文件， 默认10MB-->
@@ -61,9 +61,9 @@
 
   <!-- 定义 ERROR 日志的输出方式 -->
   <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <File>${LOG_HOME}\${LOG_PREFIX}_error.log</File>
+    <File>${LOG_HOME}/${LOG_PREFIX}_error.log</File>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${LOG_HOME}\${LOG_PREFIX}_error_%d{yyyy-MM-dd}_%i.gz</fileNamePattern>
+      <fileNamePattern>${LOG_HOME}/${LOG_PREFIX}_error_%d{yyyy-MM-dd}_%i.gz</fileNamePattern>
       <!-- 配置日志的滚动时间 ，表示只保留最近 10 天的日志-->
       <maxHistory>${MAX_HISTORY}</maxHistory>
       <!--当天的日志大小超过 ${MAX_FILE_SIZE} 文件大小时候，新的内容写入新的文件， 默认10MB-->

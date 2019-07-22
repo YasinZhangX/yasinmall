@@ -17,7 +17,6 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'war'
     id 'idea'
 }
 
@@ -75,12 +74,11 @@ dependencies {
 }
 
 group = 'com'
-version = '2.0-SNAPSHOT'
 description = 'yasinmall Webapp'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-def env = System.getProperty("profile") ?: "home"
+def env = System.getProperty("profile") ?: "lab"
 
 sourceSets {
     main {
