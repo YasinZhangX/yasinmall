@@ -30,6 +30,8 @@ build/
 *.iws
 
 # temp file
+yasinmall_logs/
+*.gz
 *.log
 *.cache
 *.diff

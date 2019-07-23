@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class CookieUtil {
 
-    private final static String COOKIE_DOMAIN = ".yasinmall.com";
+    private final static String COOKIE_DOMAIN = "yasinmall.cn";
     private final static String COOKIE_NAME = "yasinmall_login_token";
 
     public static String readLoginToken(HttpServletRequest request) {
@@ -34,6 +34,7 @@ public class CookieUtil {
     public static void writeLoginToken(HttpServletResponse response, String token) {
         Cookie ck = new Cookie(COOKIE_NAME, token);
         ck.setDomain(COOKIE_DOMAIN);
+        ck.setHttpOnly(true);
         // 代表设置在根目录上
         ck.setPath("/");
         // 如果不设置maxAge，cookie就不会写入硬盘，而是写在内存中，只在当前页面有效
