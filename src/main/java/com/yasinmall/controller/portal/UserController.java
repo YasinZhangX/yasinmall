@@ -5,6 +5,7 @@ import com.yasinmall.common.ResponseCode;
 import com.yasinmall.common.ServerResponse;
 import com.yasinmall.pojo.User;
 import com.yasinmall.service.IUserService;
+import com.yasinmall.util.CookieUtil;
 import com.yasinmall.util.JsonUtil;
 import com.yasinmall.util.RedisPoolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -36,9 +39,14 @@ public class UserController {
      */
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> login(String username, String password, HttpSession session) {
+    public ServerResponse<User> login(String username, String password, HttpSession session,
+                                      HttpServletRequest httpServletRequest,
+                                      HttpServletResponse httpServletResponse) {
         ServerResponse<User> response = iUserService.login(username, password);
         if (response.isSuccess()) {
+            CookieUtil.writeLoginToken(httpServletResponse, session.getId());
+            CookieUtil.readLoginToken(httpServletRequest);
+            CookieUtil.deleteLoginToken(httpServletRequest, httpServletResponse);
             RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(response.getData()),
                 Const.RedisCacheExpireTime.REDIS_SESSION_TIME);
         }
