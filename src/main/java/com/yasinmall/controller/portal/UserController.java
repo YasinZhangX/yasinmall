@@ -31,7 +31,7 @@ public class UserController {
 
 
     /**
-     * 用户登录，并创建对应的 session  5B9DC250F68AC355518BD757787BF172 D5D80EDD063CD6A132BC147F4E334D8B
+     * 用户登录，并创建对应的 session
      *
      * @param username 用户名
      * @param password 用户登录密码

@@ -31,6 +31,7 @@ build/
 
 # temp file
 yasinmall_logs/
+out/
 *.gz
 *.log
 *.cache
