@@ -58,32 +58,4 @@ public class CookieUtil {
             }
         }
     }
-
-    static void zllColorLight_OnOffCB(uint8 cmd)
-    {
-        // 缩进2个空格
-        boolean state = true;
-
-        // 运算符左右必须有一个空格
-        int flag = 0;
-
-        // 关键字if与括号之间必须有一个空格, 括号内部与两边括号之间没有空格
-        if (flag == 0)
-        {
-            state = false;
-        }
-
-        // 左大括号前换行；左大括号后换行
-        if (flag == 1)
-        {
-            state = true;
-        // 右大括号前换行，右大括号后换行
-        }
-        else
-        {
-            state = false;
-        // 在右大括号后直接结束，则必须换行
-        }
-    }
-
 }
