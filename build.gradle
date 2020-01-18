@@ -78,7 +78,7 @@ description = 'yasinmall Webapp'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-def env = System.getProperty("profile") ?: "lab"
+def env = System.getProperty("profile") ?: "home"
 
 sourceSets {
     main {

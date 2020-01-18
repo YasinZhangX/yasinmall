@@ -1,18 +1,21 @@
 package com.yasinmall.controller.backend;
 
-import com.yasinmall.common.Const;
 import com.yasinmall.common.ResponseCode;
 import com.yasinmall.common.ServerResponse;
 import com.yasinmall.pojo.User;
 import com.yasinmall.service.ICategoryService;
 import com.yasinmall.service.IUserService;
+import com.yasinmall.util.CookieUtil;
+import com.yasinmall.util.JsonUtil;
+import com.yasinmall.util.RedisPoolUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author yasin
@@ -31,17 +34,17 @@ public class CategoryManageController {
     /**
      * 添加品类，只有已登录管理员可以操作
      *
-     * @param session      用户session
+     * @param httpServletRequest      用户httpServletRequest
      * @param categoryName 品类名称
      * @param parentId     品类父类ID
      * @return ServerResponse
      */
     @RequestMapping(value = "add_category.do")
     @ResponseBody
-    public ServerResponse addCategory(HttpSession session, String categoryName,
+    public ServerResponse addCategory(HttpServletRequest httpServletRequest, String categoryName,
                                       @RequestParam(value = "parentId", defaultValue = "0") int parentId) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
 
         // 校验用户是否存在且有管理员权限
         ServerResponse resultRsp = userAdminAuth(user);
@@ -56,16 +59,16 @@ public class CategoryManageController {
     /**
      * 更新品类名称
      *
-     * @param session      用户session
+     * @param httpServletRequest      用户httpServletRequest
      * @param categoryId   品类ID
      * @param categoryName 品类名称
      * @return ServerResponse
      */
     @RequestMapping(value = "set_category_name.do")
     @ResponseBody
-    public ServerResponse setCategoryName(HttpSession session, Integer categoryId, String categoryName) {
+    public ServerResponse setCategoryName(HttpServletRequest httpServletRequest, Integer categoryId, String categoryName) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
 
         // 校验用户是否存在且有管理员权限
         ServerResponse resultRsp = userAdminAuth(user);
@@ -80,16 +83,16 @@ public class CategoryManageController {
     /**
      * 查询当前品类的子分类
      *
-     * @param session    用户session
+     * @param httpServletRequest    用户httpServletRequest
      * @param categoryId 当前品类ID
      * @return ServerResponse
      */
     @RequestMapping(value = "get_category.do")
     @ResponseBody
-    public ServerResponse getChildrenParallelCategory(HttpSession session,
+    public ServerResponse getChildrenParallelCategory(HttpServletRequest httpServletRequest,
                                                       @RequestParam(value = "categoryId", defaultValue = "0") Integer categoryId) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
 
         // 校验用户是否存在且有管理员权限
         ServerResponse resultRsp = userAdminAuth(user);
@@ -104,16 +107,16 @@ public class CategoryManageController {
     /**
      * 查询本节点ID以及其子节点ID
      *
-     * @param session    用户session
+     * @param httpServletRequest    用户httpServletRequest
      * @param categoryId 当前品类ID
      * @return ServerResponse
      */
     @RequestMapping(value = "get_deep_category.do")
     @ResponseBody
-    public ServerResponse getCategoryAndDeepChildrenCategory(HttpSession session,
+    public ServerResponse getCategoryAndDeepChildrenCategory(HttpServletRequest httpServletRequest,
                                                              @RequestParam(value = "categoryId", defaultValue = "0") Integer categoryId) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
 
         // 校验用户是否存在且有管理员权限
         ServerResponse resultRsp = userAdminAuth(user);
@@ -128,8 +131,13 @@ public class CategoryManageController {
     /**
      * 获取当前登录用户
      */
-    private User getCurrentUser(HttpSession session) {
-        return (User) session.getAttribute(Const.CURRENT_USER);
+    private User getCurrentUser(HttpServletRequest httpServletRequest) {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(loginToken)) {
+            return null;
+        }
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        return JsonUtil.string2Obj(userJsonStr, User.class);
     }
 
     /**

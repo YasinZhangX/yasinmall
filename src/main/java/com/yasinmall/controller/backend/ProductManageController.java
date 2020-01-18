@@ -1,7 +1,6 @@
 package com.yasinmall.controller.backend;
 
 import com.google.common.collect.Maps;
-import com.yasinmall.common.Const;
 import com.yasinmall.common.ResponseCode;
 import com.yasinmall.common.ServerResponse;
 import com.yasinmall.pojo.Product;
@@ -9,7 +8,10 @@ import com.yasinmall.pojo.User;
 import com.yasinmall.service.IFileService;
 import com.yasinmall.service.IProductService;
 import com.yasinmall.service.IUserService;
+import com.yasinmall.util.CookieUtil;
+import com.yasinmall.util.JsonUtil;
 import com.yasinmall.util.PropertiesUtil;
+import com.yasinmall.util.RedisPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,14 +44,14 @@ public class ProductManageController {
     /**
      * 新增或更新产品
      *
-     * @param session 用户session
+     * @param httpServletRequest 用户httpServletRequest
      * @param product 产品数据
      * @return ServerResponse
      */
     @RequestMapping("save.do")
     @ResponseBody
-    public ServerResponse productSave(HttpSession session, Product product) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse productSave(HttpServletRequest httpServletRequest, Product product) {
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorCodeM(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请登录");
         }
@@ -66,15 +68,15 @@ public class ProductManageController {
     /**
      * 更新产品销售状态
      *
-     * @param session   用户session
+     * @param httpServletRequest   用户httpServletRequest
      * @param productId 产品ID
      * @param status    产品销售状态
      * @return ServerResponse
      */
     @RequestMapping("set_sale_status.do")
     @ResponseBody
-    public ServerResponse setSaleStatus(HttpSession session, Integer productId, Integer status) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse setSaleStatus(HttpServletRequest httpServletRequest, Integer productId, Integer status) {
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorCodeM(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请登录");
         }
@@ -91,14 +93,14 @@ public class ProductManageController {
     /**
      * 获取产品详细信息
      *
-     * @param session   用户session
+     * @param httpServletRequest   用户httpServletRequest
      * @param productId 产品ID
      * @return ServerResponse
      */
     @RequestMapping("detail.do")
     @ResponseBody
-    public ServerResponse getDetail(HttpSession session, Integer productId) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse getDetail(HttpServletRequest httpServletRequest, Integer productId) {
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorCodeM(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请登录");
         }
@@ -115,16 +117,16 @@ public class ProductManageController {
     /**
      * 获取产品列表
      *
-     * @param session  用户session
+     * @param httpServletRequest  用户httpServletRequest
      * @param pageNum  页码数
      * @param pageSize 页面大小
      * @return ServerResponse
      */
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse getList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+    public ServerResponse getList(HttpServletRequest httpServletRequest, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                   @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorCodeM(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请登录");
         }
@@ -142,7 +144,7 @@ public class ProductManageController {
     /**
      * 搜索产品
      *
-     * @param session     用户session
+     * @param httpServletRequest     用户httpServletRequest
      * @param productName 产品名称
      * @param productId   产品ID
      * @param pageNum     页码数
@@ -151,10 +153,10 @@ public class ProductManageController {
      */
     @RequestMapping("search.do")
     @ResponseBody
-    public ServerResponse productSearch(HttpSession session, String productName, Integer productId,
+    public ServerResponse productSearch(HttpServletRequest httpServletRequest, String productName, Integer productId,
                                         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorCodeM(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请登录");
         }
@@ -170,8 +172,8 @@ public class ProductManageController {
 
     @RequestMapping("upload.do")
     @ResponseBody
-    public ServerResponse upload(HttpSession session, @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse upload(HttpServletRequest httpServletRequest, @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return ServerResponse.createByErrorCodeM(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请登录");
         }
@@ -198,7 +200,7 @@ public class ProductManageController {
                                  @RequestParam(value = "upload_file", required = false) MultipartFile file,
                                  HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> resultMap = Maps.newHashMap();
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        User user = getCurrentUser(request);
         if (user == null) {
             resultMap.put("success", false);
             resultMap.put("msg", "请登录管理员账户");
@@ -226,6 +228,18 @@ public class ProductManageController {
             resultMap.put("msg", "无权限操作");
             return resultMap;
         }
+    }
+
+    /**
+     * 获取当前登录用户
+     */
+    private User getCurrentUser(HttpServletRequest httpServletRequest) {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (org.apache.commons.lang.StringUtils.isEmpty(loginToken)) {
+            return null;
+        }
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        return JsonUtil.string2Obj(userJsonStr, User.class);
     }
 
 }

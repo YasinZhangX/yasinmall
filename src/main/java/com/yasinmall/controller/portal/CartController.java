@@ -5,12 +5,16 @@ import com.yasinmall.common.ResponseCode;
 import com.yasinmall.common.ServerResponse;
 import com.yasinmall.pojo.User;
 import com.yasinmall.service.ICartService;
+import com.yasinmall.util.CookieUtil;
+import com.yasinmall.util.JsonUtil;
+import com.yasinmall.util.RedisPoolUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author yasin
@@ -25,14 +29,14 @@ public class CartController {
     /**
      * 查询用户购物车数据
      *
-     * @param session 用户session
+     * @param httpServletRequest 用户request
      * @return ServerResponse
      */
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse list(HttpSession session) {
+    public ServerResponse list(HttpServletRequest httpServletRequest) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -43,16 +47,16 @@ public class CartController {
     /**
      * 向购物车添加产品
      *
-     * @param session   用户session
+     * @param httpServletRequest 用户request
      * @param count     添加产品数量
      * @param productId 添加产品ID
      * @return ServerResponse
      */
     @RequestMapping("add.do")
     @ResponseBody
-    public ServerResponse add(HttpSession session, Integer count, Integer productId) {
+    public ServerResponse add(HttpServletRequest httpServletRequest, Integer count, Integer productId) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -63,16 +67,16 @@ public class CartController {
     /**
      * 更新购物车内产品数量
      *
-     * @param session   用户session
+     * @param httpServletRequest 用户request
      * @param count     添加产品数量
      * @param productId 添加产品ID
      * @return ServerResponse
      */
     @RequestMapping("update.do")
     @ResponseBody
-    public ServerResponse update(HttpSession session, Integer count, Integer productId) {
+    public ServerResponse update(HttpServletRequest httpServletRequest, Integer count, Integer productId) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -83,15 +87,15 @@ public class CartController {
     /**
      * 删除购物车内产品
      *
-     * @param session    用户session
+     * @param httpServletRequest 用户request
      * @param productIds 由产品ID组成
      * @return ServerResponse
      */
     @RequestMapping("delete_product.do")
     @ResponseBody
-    public ServerResponse deleteProduct(HttpSession session, String productIds) {
+    public ServerResponse deleteProduct(HttpServletRequest httpServletRequest, String productIds) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -101,9 +105,9 @@ public class CartController {
 
     @RequestMapping("select_all.do")
     @ResponseBody
-    public ServerResponse selectAll(HttpSession session) {
+    public ServerResponse selectAll(HttpServletRequest httpServletRequest) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -113,9 +117,9 @@ public class CartController {
 
     @RequestMapping("un_select_all.do")
     @ResponseBody
-    public ServerResponse unSelectAll(HttpSession session) {
+    public ServerResponse unSelectAll(HttpServletRequest httpServletRequest) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -125,9 +129,9 @@ public class CartController {
 
     @RequestMapping("select.do")
     @ResponseBody
-    public ServerResponse selectAll(HttpSession session, Integer productId) {
+    public ServerResponse selectAll(HttpServletRequest httpServletRequest, Integer productId) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -137,9 +141,9 @@ public class CartController {
 
     @RequestMapping("un_select.do")
     @ResponseBody
-    public ServerResponse unSelectAll(HttpSession session, Integer productId) {
+    public ServerResponse unSelectAll(HttpServletRequest httpServletRequest, Integer productId) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -149,9 +153,9 @@ public class CartController {
 
     @RequestMapping("get_cart_product_count.do")
     @ResponseBody
-    public ServerResponse getCartProductCount(HttpSession session) {
+    public ServerResponse getCartProductCount(HttpServletRequest httpServletRequest) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return ServerResponse.createBySuccessD(0);
         }
@@ -162,8 +166,13 @@ public class CartController {
     /**
      * 获取当前登录用户
      */
-    private User getCurrentUser(HttpSession session) {
-        return (User) session.getAttribute(Const.CURRENT_USER);
+    private User getCurrentUser(HttpServletRequest httpServletRequest) {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(loginToken)) {
+            return null;
+        }
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        return JsonUtil.string2Obj(userJsonStr, User.class);
     }
 
     /**

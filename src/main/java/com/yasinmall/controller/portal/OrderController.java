@@ -9,7 +9,11 @@ import com.yasinmall.common.ResponseCode;
 import com.yasinmall.common.ServerResponse;
 import com.yasinmall.pojo.User;
 import com.yasinmall.service.IOrderService;
+import com.yasinmall.util.CookieUtil;
+import com.yasinmall.util.JsonUtil;
+import com.yasinmall.util.RedisPoolUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -33,15 +36,15 @@ public class OrderController {
 
     /**
      * 创建订单
-     * @param session 用户session
+     * @param httpServletRequest 用户httpServletRequest
      * @param shippingId 收货地址ID
      * @return ServerResponse
      */
     @RequestMapping("create.do")
     @ResponseBody
-    public ServerResponse create(HttpSession session, Integer shippingId) {
+    public ServerResponse create(HttpServletRequest httpServletRequest, Integer shippingId) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -51,15 +54,15 @@ public class OrderController {
 
     /**
      * 删除订单
-     * @param session 用户session
+     * @param httpServletRequest 用户httpServletRequest
      * @param orderNo 待删除订单号
      * @return ServerResponse
      */
     @RequestMapping("cancel.do")
     @ResponseBody
-    public ServerResponse cancel(HttpSession session, Long orderNo) {
+    public ServerResponse cancel(HttpServletRequest httpServletRequest, Long orderNo) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -69,14 +72,14 @@ public class OrderController {
 
     /**
      * 获取用户购物车中产品列表
-     * @param session 用户session
+     * @param httpServletRequest 用户httpServletRequest
      * @return ServerResponse
      */
     @RequestMapping("get_order_cart_product.do")
     @ResponseBody
-    public ServerResponse getOrderCartProduct(HttpSession session) {
+    public ServerResponse getOrderCartProduct(HttpServletRequest httpServletRequest) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -87,15 +90,15 @@ public class OrderController {
     /**
      * 获取用户订单详情
      *
-     * @param session 用户session
+     * @param httpServletRequest 用户httpServletRequest
      * @param orderNo 用户订单ID
      * @return ServerResponse
      */
     @RequestMapping("detail.do")
     @ResponseBody
-    public ServerResponse detail(HttpSession session, Long orderNo) {
+    public ServerResponse detail(HttpServletRequest httpServletRequest, Long orderNo) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -106,18 +109,18 @@ public class OrderController {
     /**
      * 查看订单
      *
-     * @param session 用户session
+     * @param httpServletRequest 用户httpServletRequest
      * @param pageNum 页码数
      * @param pageSize 页面大小
      * @return ServerResponse
      */
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse list(HttpSession session,
+    public ServerResponse list(HttpServletRequest httpServletRequest,
                                @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -127,16 +130,16 @@ public class OrderController {
 
     /**
      * 订单支付
-     * @param session 用户session
+     * @param httpServletRequest 用户httpServletRequest
      * @param orderNo 订单号
      * @param request 用户请求
      * @return ServerResponse
      */
     @RequestMapping("pay.do")
     @ResponseBody
-    public ServerResponse pay(HttpSession session, Long orderNo, HttpServletRequest request) {
+    public ServerResponse pay(HttpServletRequest httpServletRequest, Long orderNo, HttpServletRequest request) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -188,15 +191,15 @@ public class OrderController {
 
     /**
      * 查询订单支付状态
-     * @param session 用户session
+     * @param httpServletRequest 用户httpServletRequest
      * @param orderNo 订单号
      * @return ServerResponse
      */
     @RequestMapping("query_order_pay_status.do")
     @ResponseBody
-    public ServerResponse queryOrderPayStatus(HttpSession session, Long orderNo) {
+    public ServerResponse queryOrderPayStatus(HttpServletRequest httpServletRequest, Long orderNo) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
         if (user == null) {
             return needLoginRsp();
         }
@@ -211,8 +214,13 @@ public class OrderController {
     /**
      * 获取当前登录用户
      */
-    private User getCurrentUser(HttpSession session) {
-        return (User) session.getAttribute(Const.CURRENT_USER);
+    private User getCurrentUser(HttpServletRequest httpServletRequest) {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(loginToken)) {
+            return null;
+        }
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        return JsonUtil.string2Obj(userJsonStr, User.class);
     }
 
     /**

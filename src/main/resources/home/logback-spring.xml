@@ -6,7 +6,7 @@
   <conversionRule conversionWord="customColor" converterClass="com.yasinmall.configuration.LogbackColorful"/>
 
   <!-- 日志根目录-->
-  <springProperty scope="context" name="LOG_HOME" source="logging.path" defaultValue="D:\mallProject\yasinmall_log"/>
+  <springProperty scope="context" name="LOG_HOME" source="logging.path" defaultValue="yasinmall_log"/>
 
   <!-- 日志级别 -->
   <springProperty scope="context" name="LOG_ROOT_LEVEL" source="logging.level.root" defaultValue="DEBUG"/>

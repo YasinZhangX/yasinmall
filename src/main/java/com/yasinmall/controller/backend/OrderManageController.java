@@ -1,18 +1,21 @@
 package com.yasinmall.controller.backend;
 
-import com.yasinmall.common.Const;
 import com.yasinmall.common.ResponseCode;
 import com.yasinmall.common.ServerResponse;
 import com.yasinmall.pojo.User;
 import com.yasinmall.service.IOrderService;
 import com.yasinmall.service.IUserService;
+import com.yasinmall.util.CookieUtil;
+import com.yasinmall.util.JsonUtil;
+import com.yasinmall.util.RedisPoolUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author yasin
@@ -29,11 +32,11 @@ public class OrderManageController {
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse orderList(HttpSession session,
-                                              @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                                              @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public ServerResponse orderList(HttpServletRequest httpServletRequest,
+                                    @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                    @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
 
         // 校验用户是否存在且有管理员权限
         ServerResponse resultRsp = userAdminAuth(user);
@@ -46,9 +49,9 @@ public class OrderManageController {
 
     @RequestMapping("detail.do")
     @ResponseBody
-    public ServerResponse orderDetail(HttpSession session, Long orderNo) {
+    public ServerResponse orderDetail(HttpServletRequest httpServletRequest, Long orderNo) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
 
         // 校验用户是否存在且有管理员权限
         ServerResponse resultRsp = userAdminAuth(user);
@@ -61,11 +64,11 @@ public class OrderManageController {
 
     @RequestMapping("search.do")
     @ResponseBody
-    public ServerResponse orderSearch(HttpSession session, Long orderNo,
+    public ServerResponse orderSearch(HttpServletRequest httpServletRequest, Long orderNo,
                                       @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                       @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
 
         // 校验用户是否存在且有管理员权限
         ServerResponse resultRsp = userAdminAuth(user);
@@ -78,9 +81,9 @@ public class OrderManageController {
 
     @RequestMapping("send_goods.do")
     @ResponseBody
-    public ServerResponse orderSendGoods(HttpSession session, Long orderNo) {
+    public ServerResponse orderSendGoods(HttpServletRequest httpServletRequest, Long orderNo) {
         // 获取当前用户
-        User user = getCurrentUser(session);
+        User user = getCurrentUser(httpServletRequest);
 
         // 校验用户是否存在且有管理员权限
         ServerResponse resultRsp = userAdminAuth(user);
@@ -94,8 +97,13 @@ public class OrderManageController {
     /**
      * 获取当前登录用户
      */
-    private User getCurrentUser(HttpSession session) {
-        return (User) session.getAttribute(Const.CURRENT_USER);
+    private User getCurrentUser(HttpServletRequest httpServletRequest) {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(loginToken)) {
+            return null;
+        }
+        String userJsonStr = RedisPoolUtil.get(loginToken);
+        return JsonUtil.string2Obj(userJsonStr, User.class);
     }
 
     /**
