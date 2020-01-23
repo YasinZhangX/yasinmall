@@ -7,7 +7,7 @@ import com.yasinmall.service.IOrderService;
 import com.yasinmall.service.IUserService;
 import com.yasinmall.util.CookieUtil;
 import com.yasinmall.util.JsonUtil;
-import com.yasinmall.util.RedisPoolUtil;
+import com.yasinmall.util.RedisShardedPoolUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -102,7 +102,7 @@ public class OrderManageController {
         if (StringUtils.isEmpty(loginToken)) {
             return null;
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisShardedPoolUtil.get(loginToken);
         return JsonUtil.string2Obj(userJsonStr, User.class);
     }
 

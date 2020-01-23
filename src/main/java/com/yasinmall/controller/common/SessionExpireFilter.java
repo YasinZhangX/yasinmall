@@ -4,7 +4,7 @@ import com.yasinmall.common.Const;
 import com.yasinmall.pojo.User;
 import com.yasinmall.util.CookieUtil;
 import com.yasinmall.util.JsonUtil;
-import com.yasinmall.util.RedisPoolUtil;
+import com.yasinmall.util.RedisShardedPoolUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.core.annotation.Order;
 
@@ -31,11 +31,11 @@ public class SessionExpireFilter implements Filter {
         String loginToken = CookieUtil.readLoginToken(httpServletRequest);
         if (StringUtils.isNotEmpty(loginToken)) {
             // 判断loginToken是否为空或""
-            String userJsonStr = RedisPoolUtil.get(loginToken);
+            String userJsonStr = RedisShardedPoolUtil.get(loginToken);
             User user = JsonUtil.string2Obj(userJsonStr, User.class);
             if (user != null) {
                 // 如果user不为空, 则重置session时间, 即调用expire
-                RedisPoolUtil.expire(loginToken, Const.RedisCacheExpireTime.REDIS_SESSION_TIME);
+                RedisShardedPoolUtil.expire(loginToken, Const.RedisCacheExpireTime.REDIS_SESSION_TIME);
             }
         }
         chain.doFilter(request, response);

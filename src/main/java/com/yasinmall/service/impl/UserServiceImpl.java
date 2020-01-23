@@ -6,7 +6,7 @@ import com.yasinmall.dao.UserMapper;
 import com.yasinmall.pojo.User;
 import com.yasinmall.service.IUserService;
 import com.yasinmall.util.MD5Util;
-import com.yasinmall.util.RedisPoolUtil;
+import com.yasinmall.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -122,7 +122,7 @@ public class UserServiceImpl implements IUserService {
         if (resultCount > 0) {
             // 问题及问题答案属于该用户，并且答案正确
             String forgetToken = UUID.randomUUID().toString();
-            RedisPoolUtil.setEx(Const.TOKEN_PREFIX + username, forgetToken, 60*60*12);
+            RedisShardedPoolUtil.setEx(Const.TOKEN_PREFIX + username, forgetToken, 60*60*12);
             return ServerResponse.createBySuccessD(forgetToken);
         }
 
@@ -140,7 +140,7 @@ public class UserServiceImpl implements IUserService {
             return ServerResponse.createByErrorM("用户不存在");
         }
 
-        String token = RedisPoolUtil.get(Const.TOKEN_PREFIX + username);
+        String token = RedisShardedPoolUtil.get(Const.TOKEN_PREFIX + username);
         if (StringUtils.isBlank(token)) {
             // token无效或者过期
             return ServerResponse.createByErrorM("token无效或者过期");

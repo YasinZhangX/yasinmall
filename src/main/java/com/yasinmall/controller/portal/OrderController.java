@@ -11,7 +11,7 @@ import com.yasinmall.pojo.User;
 import com.yasinmall.service.IOrderService;
 import com.yasinmall.util.CookieUtil;
 import com.yasinmall.util.JsonUtil;
-import com.yasinmall.util.RedisPoolUtil;
+import com.yasinmall.util.RedisShardedPoolUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -219,7 +219,7 @@ public class OrderController {
         if (StringUtils.isEmpty(loginToken)) {
             return null;
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisShardedPoolUtil.get(loginToken);
         return JsonUtil.string2Obj(userJsonStr, User.class);
     }
 

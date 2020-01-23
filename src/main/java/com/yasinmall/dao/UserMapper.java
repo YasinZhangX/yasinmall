@@ -3,7 +3,9 @@ package com.yasinmall.dao;
 import com.yasinmall.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 @Mapper
 public interface UserMapper {
     int deleteByPrimaryKey(Integer id);

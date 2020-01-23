@@ -2,9 +2,11 @@ package com.yasinmall.dao;
 
 import com.yasinmall.pojo.Cart;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface CartMapper {
     int deleteByPrimaryKey(Integer id);
 

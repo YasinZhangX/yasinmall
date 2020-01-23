@@ -6,7 +6,7 @@ import com.yasinmall.pojo.User;
 import com.yasinmall.service.IUserService;
 import com.yasinmall.util.CookieUtil;
 import com.yasinmall.util.JsonUtil;
-import com.yasinmall.util.RedisPoolUtil;
+import com.yasinmall.util.RedisShardedPoolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +42,7 @@ public class UserManageController {
             if (user.getRole() == Const.Role.ROLE_ADMIN) {
                 // 管理员登录
                 String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-                RedisPoolUtil.setEx(loginToken, JsonUtil.obj2String(user), Const.RedisCacheExpireTime.REDIS_SESSION_TIME);
+                RedisShardedPoolUtil.setEx(loginToken, JsonUtil.obj2String(user), Const.RedisCacheExpireTime.REDIS_SESSION_TIME);
                 return response;
             } else {
                 return ServerResponse.createByErrorM("不是管理员，无法登录");

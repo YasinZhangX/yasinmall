@@ -2,9 +2,11 @@ package com.yasinmall.dao;
 
 import com.yasinmall.pojo.OrderItem;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface OrderItemMapper {
     int deleteByPrimaryKey(Integer id);
 
