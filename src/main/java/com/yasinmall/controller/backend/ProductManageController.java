@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -196,8 +195,7 @@ public class ProductManageController {
 
     @RequestMapping("richtext_img_upload.do")
     @ResponseBody
-    public Map richtextImgUpload(HttpSession session,
-                                 @RequestParam(value = "upload_file", required = false) MultipartFile file,
+    public Map richtextImgUpload(@RequestParam(value = "upload_file", required = false) MultipartFile file,
                                  HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> resultMap = Maps.newHashMap();
         User user = getCurrentUser(request);
