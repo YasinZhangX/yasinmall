@@ -1,11 +1,5 @@
 package com.yasinmall.controller.common;
 
-import com.yasinmall.common.Const;
-import com.yasinmall.pojo.User;
-import com.yasinmall.util.CookieUtil;
-import com.yasinmall.util.JsonUtil;
-import com.yasinmall.util.RedisShardedPoolUtil;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.core.annotation.Order;
 
 import javax.servlet.*;
@@ -28,16 +22,16 @@ public class SessionExpireFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if (StringUtils.isNotEmpty(loginToken)) {
-            // 判断loginToken是否为空或""
-            String userJsonStr = RedisShardedPoolUtil.get(loginToken);
-            User user = JsonUtil.string2Obj(userJsonStr, User.class);
-            if (user != null) {
-                // 如果user不为空, 则重置session时间, 即调用expire
-                RedisShardedPoolUtil.expire(loginToken, Const.RedisCacheExpireTime.REDIS_SESSION_TIME);
-            }
-        }
+//        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+//        if (StringUtils.isNotEmpty(loginToken)) {
+//            // 判断loginToken是否为空或""
+//            String userJsonStr = RedisShardedPoolUtil.get(loginToken);
+//            User user = JsonUtil.string2Obj(userJsonStr, User.class);
+//            if (user != null) {
+//                // 如果user不为空, 则重置session时间, 即调用expire
+//                RedisShardedPoolUtil.expire(loginToken, Const.RedisCacheExpireTime.REDIS_SESSION_TIME);
+//            }
+//        }
         chain.doFilter(request, response);
     }
 
