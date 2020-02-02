@@ -157,7 +157,7 @@ public class CartController {
         // 获取当前用户
         User user = getCurrentUser(httpServletRequest);
         if (user == null) {
-            return ServerResponse.createBySuccessD(0);
+            return needLoginRsp();
         }
 
         return iCartService.getCartProductCount(user.getId());

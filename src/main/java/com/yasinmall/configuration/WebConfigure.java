@@ -15,7 +15,7 @@ public class WebConfigure implements WebMvcConfigurer {
     private AuthorityInterceptor authorityInterceptor;
 
     @Autowired
-    WebConfigure(AuthorityInterceptor authorityInterceptor) {
+    public WebConfigure(AuthorityInterceptor authorityInterceptor) {
         this.authorityInterceptor = authorityInterceptor;
     }
 
