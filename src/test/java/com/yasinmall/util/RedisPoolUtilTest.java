@@ -1,8 +1,8 @@
 package com.yasinmall.util;
 
-import com.yasinmall.common.RedisPool;
+import com.yasinmall.common.RedisShardedPool;
 import org.junit.Test;
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ShardedJedis;
 
 /**
  * @author Yasin Zhang
@@ -11,7 +11,7 @@ public class RedisPoolUtilTest {
 
     @Test
     public void test() {
-        Jedis jedis = RedisPool.getJedis();
+        ShardedJedis jedis = RedisShardedPool.getJedis();
 
         RedisShardedPoolUtil.set("keyTest", "value");
 

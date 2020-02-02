@@ -56,7 +56,9 @@ public class FTPUtil {
                 ftpClient.enterLocalPassiveMode();
                 for (File fileItem : fileList) {
                     fileInputStream = new FileInputStream(fileItem);
-                    ftpClient.storeFile(fileItem.getName(), fileInputStream);
+                    if (uploaded) {
+                        uploaded = ftpClient.storeFile(fileItem.getName(), fileInputStream);
+                    }
                 }
             } catch (IOException e) {
                 log.error("上传文件异常", e);
