@@ -29,6 +29,7 @@ import com.yasinmall.vo.OrderVo;
 import com.yasinmall.vo.ShippingVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -370,6 +371,32 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         return ServerResponse.createByErrorM("订单不存在");
+    }
+
+    @Override
+    public void closeOrder(int hour) {
+        Date closeDateTime = DateUtils.addHours(new Date(), -1 * hour);
+        List<Order> orderList = orderMapper.selectOrderStatusByCreateTime(
+            Const.OrderStatusEnum.NO_PAY.getCode(), DateTimeUtil.dateToStr(closeDateTime));
+
+        for (Order order : orderList) {
+            List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
+            for (OrderItem orderItem : orderItemList) {
+                // 采用主键where查询，同时使用MySQL的InnoDB引擎，使用行级锁
+                Integer stock = productMapper.selectStockByProductId(orderItem.getProductId());
+                // 商品可能被删除
+                if (stock == null) {
+                    continue;
+                }
+                Product product = new Product();
+                product.setId(orderItem.getProductId());
+                product.setStock(stock+orderItem.getQuantity());
+                productMapper.updateByPrimaryKeySelective(product);
+            }
+            orderMapper.closeOrderByOrderId(order.getId());
+            log.info("关闭订单OrderNo: {}", order.getOrderNo());
+        }
+
     }
 
     /**
