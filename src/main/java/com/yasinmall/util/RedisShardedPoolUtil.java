@@ -73,4 +73,16 @@ public class RedisShardedPoolUtil {
         return result;
     }
 
+    public static Long setnx(String key, String value) {
+        Long result = null;
+
+        try (ShardedJedis jedis = RedisShardedPool.getJedis()) {
+            result = jedis.setnx(key, value);
+        } catch (Exception e) {
+            log.error("set key:{} value:{} error", key, value, e);
+        }
+
+        return result;
+    }
+
 }
