@@ -85,4 +85,15 @@ public class RedisShardedPoolUtil {
         return result;
     }
 
+    public static String getSet(String key, String value) {
+        String result = null;
+
+        try (ShardedJedis jedis = RedisShardedPool.getJedis()) {
+            result = jedis.getSet(key, value);
+        } catch (Exception e) {
+            log.error("set key:{} value:{} error", key, value, e);
+        }
+
+        return result;
+    }
 }
