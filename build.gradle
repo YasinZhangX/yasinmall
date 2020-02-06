@@ -75,6 +75,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-data-redis"  // spring boot redis
     compile 'org.springframework.session:spring-session-data-redis'  // spring session
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    compile 'org.redisson:redisson-spring-boot-starter:3.12.1'
 }
 
 group = 'com'
