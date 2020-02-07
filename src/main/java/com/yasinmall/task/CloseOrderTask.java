@@ -86,9 +86,9 @@ public class CloseOrderTask {
     @Scheduled(cron = "0 */1 * * * ?")  // 每分钟执行
     public void closeOrderTaskV4() {
         RLock lock = redissonClient.getLock(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
-        Boolean getLock = false;
+        boolean getLock = false;
         try {
-            if (getLock = lock.tryLock(2, 5, TimeUnit.SECONDS)) {
+            if (getLock = lock.tryLock(1, 50, TimeUnit.SECONDS)) {
                 log.info("Redisson获取分布式锁：{},ThreadName:{}", Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK,
                     Thread.currentThread().getName());
                 int hour = PropertiesUtil.getIntProperty("close_order_task.time.hour", 2);
