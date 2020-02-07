@@ -54,13 +54,10 @@ public class RedisShardedPool {
 
         JedisShardInfo info1 = new JedisShardInfo(redis1Ip, redis1Port, 1000*2, "redis1");
         info1.setPassword(redis1Pass);
-        JedisShardInfo info2 = new JedisShardInfo(redis2Ip, redis2Port, 1000*2, "redis2");
-        info2.setPassword(redis2Pass);
 
-        List<JedisShardInfo> jedisShardInfoList = new ArrayList<>(2);
+        List<JedisShardInfo> jedisShardInfoList = new ArrayList<>();
 
         jedisShardInfoList.add(info1);
-        jedisShardInfoList.add(info2);
 
         pool = new ShardedJedisPool(config, jedisShardInfoList, Hashing.MURMUR_HASH, Sharded.DEFAULT_KEY_TAG_PATTERN);
     }
