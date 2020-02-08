@@ -83,7 +83,7 @@ public class CloseOrderTask {
         }
     }
 
-    @Scheduled(cron = "*/20 * * * * ?")  // 每分钟执行
+    @Scheduled(cron = "0 */1 * * * ?")  // 每分钟执行
     public void closeOrderTaskV4() {
         RLock lock = redissonClient.getLock(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
         boolean getLock = false;
@@ -92,6 +92,7 @@ public class CloseOrderTask {
                 log.info("Redisson获取分布式锁：{},ThreadName:{}", Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK,
                     Thread.currentThread().getName());
                 int hour = PropertiesUtil.getIntProperty("close_order_task.time.hour", 2);
+                // TODO: 添加业务
                 // iOrderService.closeOrder(hour);
             } else {
                 log.info("Redisson没有获取到分布式锁:{}", Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
